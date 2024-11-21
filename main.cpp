@@ -74,91 +74,39 @@ int main(int argc, char** argv) {
     }
 
     vector<string> prefixes;
-    vector<string> no_results;
-    vector<multimap<double,movie,greater<double>>> prefix_vector; 
 
-    
     while (getline(prefixFile, line)) {
         if (!line.empty()) {
             prefixes.push_back(line);
         }
     }
 
-    multimap<double,movie,greater<double>> pref;
-    for (string prefix : prefixes){
-        string upper_bound_prefix = prefix;
-        upper_bound_prefix.back()++;
-
-        auto lower = movies.lower_bound(movie(prefix, 0));
-        auto upper = movies.lower_bound(movie(upper_bound_prefix, 0));
-
-        for (auto it = lower; it != upper; ++it) {
-            if (prefix_checker(it->get_name(), prefix)) {
-                pref.insert({it->get_rating(), *it});
+    map<string, set<movie, sortRating>> movieMap;
+    for(int i = 0; i < prefixes.size(); i++){
+        for(auto it = movies.begin(); it != movies.end(); it++){
+            if(it->get_name().find(prefixes[i]) == 0 && it->get_name().size() >= prefixes[i].size()){
+                movieMap[prefixes[i]].insert(*it);
             }
         }
-        prefix_vector.push_back(pref); 
 
-        if (pref.empty()) {
-            no_results.push_back(prefix); 
-        } 
-
-        pref.clear();
-    }
-    
-    print_results(prefixes, no_results, prefix_vector);
-    return 0;
-}
-
-
-void print_results(vector<string> prefixes, vector<string> no_results, vector<multimap<double,movie,greater<double>>> prefix_vector){
-    int j = 0;
-    for (int i = 0; i < prefix_vector.size(); i++){
-        multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
-        
-        if (pref.empty()){
-            cout << "No movies found with prefix "<< no_results.at(j) << endl;
-            j++;
-            continue;
+        if(movieMap[prefixes[i]].empty()){
+        cout << "No movies found with prefix " << prefixes[i];
+        } else {
+        for(auto& movie : movieMap[prefixes[i]]){
+            cout << movie.get_name() << ", " << movie.get_rating() << endl;
         }
-
-        for (auto it = pref.begin(); it != pref.end(); it++){
-            movie mov = it->second;
-
-            cout << mov.get_name() << ", " << mov.get_rating() << endl;
         }
-
         cout << endl;
     }
 
-    for (int i = 0; i < prefix_vector.size(); i++){
-        multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
-        
-        if (pref.empty()){
-            continue;
-        }
-
-        for (auto it = pref.begin(); it != pref.end(); it++){
-            movie mov = it->second;
-            cout << "Best movie with prefix " << prefixes.at(i) << " is: " << mov.get_name() << " with rating " << std::fixed << std::setprecision(1) << mov.get_rating() << endl;
-            break;
+    for(int i = 0; i < prefixes.size(); i++){
+        if(movieMap[prefixes[i]].size() != 0){   
+            cout << "Best movie with prefix " << prefixes[i] << " is: " << movieMap[prefixes[i]].begin()->get_name() << " with rating " << std::fixed << std::setprecision(1) << movie_map[prefixes[i]].begin()->get_rating() << endl;
         }
     }
+    return 0;
 }
 
-bool prefix_checker(const string& movString, const string& prefix) {
-    if (movString.length() < prefix.length()) {
-        return false;
-    }
-
-    for (int i = 0; i < prefix.length(); ++i) {
-        if (movString[i] != prefix[i]) {
-            return false;
-        }
-    }
-
-    return true;
-}
 
 bool parseLine(string &line, string &movieName, double &movieRating) {
     int commaIndex = line.find_last_of(",");
