@@ -5,8 +5,7 @@ using namespace std;
 
 class movie {
     public:
-        movie();
-        movie(string name, double rating);
+        movie(string movieName, double movieRating);
         double get_rating() const;
         string get_name() const;
         bool operator<(const movie& mov) const;
@@ -14,4 +13,3 @@ class movie {
         double rating;
         string name;
 };
-

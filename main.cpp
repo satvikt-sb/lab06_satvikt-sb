@@ -16,10 +16,21 @@ using namespace std;
 #include "utilities.h"
 #include "movies.h"
 
-bool parseLine(string &line, string &movieName, double &movieRating);
-void print_results(vector<string> prefixes, vector<string> zero_results, vector<multimap<double,movie,greater<double>>> prefix_vector);
-bool prefix_checker(const string& movString, const string& prefix);
 
+bool parseLine(string &line, string &movieName, double &movieRating);
+
+class sortRating{
+    public:
+        bool operator()(const movie& other, const movie& otherTitle) const;
+};
+
+bool sortRating::operator()(const movie& other, const movie& otherTitle) const {
+    if (other.get_rating() == otherTitle.get_rating()) {
+        return other.get_name() < otherTitle.get_name();
+    }
+
+    return other.get_rating() > otherTitle.get_rating();
+}
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -36,10 +47,9 @@ int main(int argc, char** argv) {
     }
   
     // Create an object of a STL data-structure to store all the movies
-    set<movie> movies;
-
     string line, movieName;
     double movieRating;
+    set<movie> movies;
 
     // Read each file and store the name and rating
     while (getline(movieFile, line) && parseLine(line, movieName, movieRating)) {
@@ -64,7 +74,7 @@ int main(int argc, char** argv) {
     }
 
     vector<string> prefixes;
-    vector<string> zero_results;
+    vector<string> no_results;
     vector<multimap<double,movie,greater<double>>> prefix_vector; 
 
     
@@ -90,24 +100,24 @@ int main(int argc, char** argv) {
         prefix_vector.push_back(pref); 
 
         if (pref.empty()) {
-            zero_results.push_back(prefix); 
+            no_results.push_back(prefix); 
         } 
 
         pref.clear();
     }
     
-    print_results(prefixes, zero_results, prefix_vector);
+    print_results(prefixes, no_results, prefix_vector);
     return 0;
 }
 
 
-void print_results(vector<string> prefixes, vector<string> zero_results, vector<multimap<double,movie,greater<double>>> prefix_vector){
+void print_results(vector<string> prefixes, vector<string> no_results, vector<multimap<double,movie,greater<double>>> prefix_vector){
     int j = 0;
     for (int i = 0; i < prefix_vector.size(); i++){
         multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
         
         if (pref.empty()){
-            cout << "No movies found with prefix "<< zero_results.at(j) << endl;
+            cout << "No movies found with prefix "<< no_results.at(j) << endl;
             j++;
             continue;
         }
@@ -137,10 +147,6 @@ void print_results(vector<string> prefixes, vector<string> zero_results, vector<
 }
 
 bool prefix_checker(const string& movString, const string& prefix) {
-    if (movString == prefix){
-        return true;
-    }
-
     if (movString.length() < prefix.length()) {
         return false;
     }
