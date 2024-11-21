@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
     vector<string> prefixes;
     vector<string> zero_results;
-    vector<multimap<double,movie,greater<double>>> prefix_vector; 
+    vector<multimap<double, movie, greater<double>>> prefix_vector; 
 
     
     while (getline(prefixFile, line)) {
@@ -87,12 +87,11 @@ int main(int argc, char** argv) {
                 pref.insert({it->get_rating(), *it});
             }
         }
-
+        prefix_vector.push_back(pref); 
         if (pref.empty()) {
             zero_results.push_back(prefix); 
-        } else {
-            prefix_vector.push_back(pref); 
-        }
+        } 
+        pref.clear();
     }
     
     print_results(prefixes, zero_results, prefix_vector);
@@ -138,6 +137,10 @@ void print_results(vector<string> prefixes, vector<string> zero_results, vector<
 
 
 bool prefix_checker(const string& movString, const string& prefix) {
+    if (movString == prefix){
+        return true;
+    }
+    
     if (movString.length() < prefix.length()) {
         return false;
     }
