@@ -31,3 +31,4 @@ string movie::get_name() const{
 bool movie::operator<(const movie& other) const{
     return name < other.get_name();
 }
+

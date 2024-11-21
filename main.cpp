@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 
     for(int i = 0; i < prefixes.size(); i++){
         if(movieMap[prefixes[i]].size() != 0){   
-            cout << "Best movie with prefix " << prefixes[i] << " is: " << movieMap[prefixes[i]].begin()->get_name() << " with rating " << std::fixed << std::setprecision(1) << movie_map[prefixes[i]].begin()->get_rating() << endl;
+            cout << "Best movie with prefix " << prefixes[i] << " is: " << movieMap[prefixes[i]].begin()->get_name() << " with rating " << std::fixed << std::setprecision(1) << movieMap[prefixes[i]].begin()->get_rating() << endl;
         }
     }
     return 0;
