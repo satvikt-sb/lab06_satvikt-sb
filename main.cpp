@@ -1,4 +1,4 @@
-// Student name: 
+// Student name: Satvik Talchuru
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -9,14 +9,18 @@
 #include <limits.h>
 #include <iomanip>
 #include <set>
+#include <map>
 #include <queue>
 #include <sstream>
 using namespace std;
 
-#include "utilities.h"
+//#include "utilities.h"
 #include "movies.h"
 
 bool parseLine(string &line, string &movieName, double &movieRating);
+void print_results(vector<string> prefixes, vector<string> zero_results, vector<multimap<double,movie,greater<double>>> prefix_vector);
+bool prefix_checker(const string& movString, const string& prefix);
+
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -33,21 +37,22 @@ int main(int argc, char** argv) {
     }
   
     // Create an object of a STL data-structure to store all the movies
+    set<movie> movies;
 
     string line, movieName;
     double movieRating;
     // Read each file and store the name and rating
     while (getline(movieFile, line) && parseLine(line, movieName, movieRating)) {
-        // Use std::string movieName and double movieRating
-        // to construct your Movie objects
-        // cout << movieName << " has rating " << movieRating << endl;
-        // insert elements into your data structure
+        movie mov(movieName,movieRating);
+            movies.insert(mov);
     }
 
     movieFile.close();
 
     if (argc == 2) {
-        //print all the movies in ascending alphabetical order of movie names
+        for (auto movs : movies){
+            cout << movs.get_name() << ", " << movs.get_rating() << endl;
+        }
         return 0;
     }
 
@@ -59,25 +64,92 @@ int main(int argc, char** argv) {
     }
 
     vector<string> prefixes;
+    vector<string> zero_results;
+    vector<multimap<double,movie,greater<double>>> prefix_vector; 
+
+    
     while (getline(prefixFile, line)) {
         if (!line.empty()) {
             prefixes.push_back(line);
         }
     }
 
-    //  For each prefix,
-    //  Find all movies that have that prefix and store them in an appropriate data structure
-    //  If no movie with that prefix exists print the following message
-    cout << "No movies found with prefix " << "<replace with prefix>" << endl;
+    multimap<double,movie,greater<double>> pref;
+    for (string prefix : prefixes){
+        string upper_bound_prefix = prefix;
+        upper_bound_prefix.back()++;
 
-    //  For each prefix,
-    //  Print the highest rated movie with that prefix if it exists.
-    cout << "Best movie with prefix " << "<replace with prefix>" << " is: " << "replace with movie name" << " with rating " << std::fixed << std::setprecision(1) << "replace with movie rating" << endl;
+        auto lower = movies.lower_bound(movie(prefix, 0));
+        auto upper = movies.lower_bound(movie(upper_bound_prefix, 0));
+
+        for (auto it = lower; it != upper; ++it) {
+            if (prefix_checker(it->get_name(), prefix)) {
+                pref.insert({it->get_rating(), *it});
+            }
+        }
+
+        if (pref.empty()) {
+            zero_results.push_back(prefix); 
+        } else {
+            prefix_vector.push_back(pref); 
+        }
+    }
+    
+    print_results(prefixes, zero_results, prefix_vector);
 
     return 0;
 }
 
 /* Add your run time analysis for part 3 of the assignment here as commented block*/
+
+void print_results(vector<string> prefixes, vector<string> zero_results, vector<multimap<double,movie,greater<double>>> prefix_vector){
+    int j = 0;
+
+    for (int i = 0; i < prefix_vector.size(); i++){
+        multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
+        
+        if (pref.empty()){
+            continue;
+        }
+
+        for (auto it = pref.begin(); it != pref.end(); it++){
+            movie mov = it->second;
+            cout << "Best movie with prefix " << prefixes.at(i) << " is: " << mov.get_name() << " with rating " << std::fixed << std::setprecision(1) << mov.get_rating() << endl;
+            break;
+        }
+    }
+
+    for (int i = 0; i < prefix_vector.size(); i++){
+        multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
+        
+        if (pref.empty()){
+            cout << "No movies found with prefix "<< zero_results.at(j) << endl;
+            j++;
+            continue;
+        }
+
+        for (auto it = pref.begin(); it != pref.end(); it++){
+            movie mov = it->second;
+            cout << mov.get_name() << ", " << mov.get_rating() << endl;
+        }
+        cout << endl;
+    }
+}
+
+
+bool prefix_checker(const string& movString, const string& prefix) {
+    if (movString.length() < prefix.length()) {
+        return false;
+    }
+
+    for (int i = 0; i < prefix.length(); ++i) {
+        if (movString[i] != prefix[i]) {
+            return false;
+        }
+    }
+
+    return true;
+}
 
 bool parseLine(string &line, string &movieName, double &movieRating) {
     int commaIndex = line.find_last_of(",");
