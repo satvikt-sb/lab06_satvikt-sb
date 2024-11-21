@@ -23,14 +23,14 @@ movie::movie(string name, double rating){
     this->name = name;
     this->rating = rating;
 }
+//rating getter
+double movie::get_rating() const{
+    return rating;
+}
 
 //name getter
 string movie::get_name() const{
     return name;
-}
-//rating getter
-double movie::get_rating() const{
-    return rating;
 }
 
 //bool operator
@@ -44,7 +44,7 @@ bool movie::operator<(const movie& mov) const{
     else {
         int ind = 0;
         while (name[ind] == other[ind]){
-            ind += 1;
+            ind+=1;
         }
         return name[ind] < other[ind];
     }
