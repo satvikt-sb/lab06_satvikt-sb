@@ -13,8 +13,7 @@
 #include <queue>
 #include <sstream>
 using namespace std;
-
-//#include "utilities.h"
+#include "utilities.h"
 #include "movies.h"
 
 bool parseLine(string &line, string &movieName, double &movieRating);
@@ -41,17 +40,18 @@ int main(int argc, char** argv) {
 
     string line, movieName;
     double movieRating;
+
     // Read each file and store the name and rating
     while (getline(movieFile, line) && parseLine(line, movieName, movieRating)) {
-        movie mov(movieName,movieRating);
-            movies.insert(mov);
+        movie movs(movieName,movieRating);
+            movies.insert(movs);
     }
 
     movieFile.close();
 
     if (argc == 2) {
-        for (auto movs : movies){
-            cout << movs.get_name() << ", " << movs.get_rating() << endl;
+        for (auto mov : movies){
+            cout << mov.get_name() << ", " << mov.get_rating() << endl;
         }
         return 0;
     }
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
     vector<string> prefixes;
     vector<string> zero_results;
-    vector<multimap<double, movie, greater<double>>> prefix_vector; 
+    vector<multimap<double,movie,greater<double>>> prefix_vector; 
 
     
     while (getline(prefixFile, line)) {
@@ -88,18 +88,18 @@ int main(int argc, char** argv) {
             }
         }
         prefix_vector.push_back(pref); 
+
         if (pref.empty()) {
             zero_results.push_back(prefix); 
         } 
+
         pref.clear();
     }
     
     print_results(prefixes, zero_results, prefix_vector);
-
     return 0;
 }
 
-/* Add your run time analysis for part 3 of the assignment here as commented block*/
 
 void print_results(vector<string> prefixes, vector<string> zero_results, vector<multimap<double,movie,greater<double>>> prefix_vector){
     int j = 0;
@@ -125,20 +125,16 @@ void print_results(vector<string> prefixes, vector<string> zero_results, vector<
         multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
         
         if (pref.empty()){
-
             continue;
         }
 
         for (auto it = pref.begin(); it != pref.end(); it++){
             movie mov = it->second;
-
             cout << "Best movie with prefix " << prefixes.at(i) << " is: " << mov.get_name() << " with rating " << std::fixed << std::setprecision(1) << mov.get_rating() << endl;
-
             break;
         }
     }
 }
-
 
 bool prefix_checker(const string& movString, const string& prefix) {
     if (movString == prefix){
@@ -168,3 +164,7 @@ bool parseLine(string &line, string &movieName, double &movieRating) {
 
     return true;
 }
+
+
+/* Add your run time analysis for part 3 of the assignment here as commented block*/
+

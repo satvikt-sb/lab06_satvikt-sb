@@ -11,7 +11,7 @@ class movie {
         string get_name() const;
         bool operator<(const movie& mov) const;
     private:
-        string name;
         double rating;
+        string name;
 };
 

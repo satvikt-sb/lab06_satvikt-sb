@@ -14,8 +14,8 @@
 
 //constructor
 movie::movie(){
-    name = "";
     rating = 0.0;
+    name = "";
 }
 
 //parameterized constructor
@@ -35,18 +35,18 @@ double movie::get_rating() const{
 
 //bool operator
 bool movie::operator<(const movie& mov) const{
-    string other_title = mov.get_name();
+    string other = mov.get_name();
 
-    if (name[0] != other_title[0]){
-        return name[0] < other_title[0];
+    if (name[0] != other[0]){
+        return name[0] < other[0];
     }
 
     else {
         int ind = 0;
-        while (name[ind] == other_title[ind]){
+        while (name[ind] == other[ind]){
             ind += 1;
         }
-        return name[ind] < other_title[ind];
+        return name[ind] < other[ind];
     }
 
 }
