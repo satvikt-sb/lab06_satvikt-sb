@@ -103,21 +103,6 @@ int main(int argc, char** argv) {
 
 void print_results(vector<string> prefixes, vector<string> zero_results, vector<multimap<double,movie,greater<double>>> prefix_vector){
     int j = 0;
-
-    for (int i = 0; i < prefix_vector.size(); i++){
-        multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
-        
-        if (pref.empty()){
-            continue;
-        }
-
-        for (auto it = pref.begin(); it != pref.end(); it++){
-            movie mov = it->second;
-            cout << "Best movie with prefix " << prefixes.at(i) << " is: " << mov.get_name() << " with rating " << std::fixed << std::setprecision(1) << mov.get_rating() << endl;
-            break;
-        }
-    }
-
     for (int i = 0; i < prefix_vector.size(); i++){
         multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
         
@@ -129,9 +114,28 @@ void print_results(vector<string> prefixes, vector<string> zero_results, vector<
 
         for (auto it = pref.begin(); it != pref.end(); it++){
             movie mov = it->second;
+
             cout << mov.get_name() << ", " << mov.get_rating() << endl;
         }
+
         cout << endl;
+    }
+
+    for (int i = 0; i < prefix_vector.size(); i++){
+        multimap<double,movie,greater<double>> pref = prefix_vector.at(i);
+        
+        if (pref.empty()){
+
+            continue;
+        }
+
+        for (auto it = pref.begin(); it != pref.end(); it++){
+            movie mov = it->second;
+
+            cout << "Best movie with prefix " << prefixes.at(i) << " is: " << mov.get_name() << " with rating " << std::fixed << std::setprecision(1) << mov.get_rating() << endl;
+
+            break;
+        }
     }
 }
 
@@ -140,7 +144,7 @@ bool prefix_checker(const string& movString, const string& prefix) {
     if (movString == prefix){
         return true;
     }
-    
+
     if (movString.length() < prefix.length()) {
         return false;
     }
