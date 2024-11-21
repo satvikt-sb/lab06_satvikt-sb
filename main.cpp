@@ -105,7 +105,64 @@ int main(int argc, char** argv) {
         }
     }
     return 0;
+
 }
+
+
+/* Add your run time analysis for part 3 of the assignment here as commented block*/
+
+//Not sure how to find milliseconds for each input file for prefix_large.txt
+
+//Time Complexity:  O(m *(log(n)+k)+ m+n)
+//Explanation:
+/*
+First, I began by reading through each of the movies and organizing them in
+alphabetical order and then printing it. Since I traversed through every movie, 
+this has the worst case scenario of n. Then, I iterated through the files
+of prefixes and pushed it into an array, having a worst case scenario of m 
+because I am traversing through every prefix. Then, I print out the movie 
+of each prefix. The outer loop goes through each prefix while the inner 
+loop goes through the set of movies to find a matching one using binary
+search having the logic of log(n). For this part of the algorithm, the runtime
+would be m * (log(n) + k). Lastly, we have to print out the best movie in each prefix and this would
+take m times because we have to traverse through each prefix again and this
+has a runtime of m. Overall, my algorithm's runtime is O(m * (log(n)+k)+ m+n )
+
+*/
+
+//Space Complexity: O(m + n + m*k + l)
+/*
+Explanation: Since all the movies are stored in a set for efficient search
+and retrieval, this requires O(n) space, where n is the total number of movies.
+Next, we have to store all the prefixes in a vector for sequential processing,
+so this requires O(m) space, where m is the number of prefixes. 
+Then, we have map the prefixes to the movies and for each prefix, the algorithm
+maps the prefix to a set of matching movies. This requires O(m * k) space, where
+k is the total maximum number of movies matching one prefix. Lastly,
+ there has to be storage for strings for movie names and prefixes are also stored, so 
+ the total space complexity is O(m + n + m*k + l).
+*/
+
+/*
+
+1. 
+I designed my algorithm for a low runtime complexity and I think I didn't do that
+bad of a job due to the usage of std::set and std::map for storage and 
+prefix to movies mapping. These allowed for logarithmic operations for 
+insertion and search, greatly increasing my runtime performance while 
+eliminating any large runtime terms.
+
+2. 
+However, this came at the sacrifice of my spacetime complexity which wasn't 
+that satisfactory, but that wasn't one of my goals to start with. I'm not
+too sure how to solve this lab with a low runtime and low space complexity 
+as well, but utilizing less data types and eliminating redudant iterations
+made the space complexity as low as possible.
+
+
+
+
+*/
 
 
 bool parseLine(string &line, string &movieName, double &movieRating) {
@@ -119,6 +176,4 @@ bool parseLine(string &line, string &movieName, double &movieRating) {
     return true;
 }
 
-
-/* Add your run time analysis for part 3 of the assignment here as commented block*/
 
